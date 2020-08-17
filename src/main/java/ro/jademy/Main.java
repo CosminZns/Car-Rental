@@ -33,8 +33,8 @@ public class Main {
         //shop.start();
 
         Operations operations = new Operations(cars, users);
-        HashMap<Car, Integer> da = operations.numberOfRents();
-        operations.bestRentedCar(da);
+        HashMap<Car, Integer> carsRenteds = operations.numberOfRents();
+        operations.bestRentedCar(carsRenteds);
 
     }
 }

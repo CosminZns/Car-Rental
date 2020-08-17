@@ -62,7 +62,7 @@ public class Operations {
         System.out.println("This car was rented " + count + " times");
     }
 
-    //How many times all the cars was rented
+    //How many times each cars was rented
     public HashMap<Car, Integer> numberOfRents() {
         HashMap<Car, Integer> rentedTimes = new HashMap<>();
         int count = 0;
@@ -78,10 +78,7 @@ public class Operations {
                         }
                     }
                 }
-
             }
-
-
         }
         for (Map.Entry<Car, Integer> entry : rentedTimes.entrySet()) {
             System.out.println(entry.getKey() + " was rented " + entry.getValue().toString() + " Times");
@@ -89,7 +86,7 @@ public class Operations {
         return rentedTimes;
     }
 
-
+    //The most rented Car
     public void bestRentedCar(HashMap<Car, Integer> rentedTimes) {
         int maxValue = 0;
         for (Map.Entry<Car, Integer> entry : rentedTimes.entrySet()) {
