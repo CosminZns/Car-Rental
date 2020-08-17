@@ -40,8 +40,8 @@ public class Make {
     public String toString() {
         return
                 " Make='" + make + '\'' +
-                ", telephoneNr='" + telephoneNr + '\'' +
-                ", location='" + location + '\'' +
-                '}';
+                        ", telephoneNr='" + telephoneNr + '\'' +
+                        ", location='" + location + '\'' +
+                        '}';
     }
 }

@@ -6,9 +6,8 @@ import ro.jademy.Users.User;
 import ro.jademy.cars.Car;
 import ro.jademy.cars.RentedCarHistory;
 
-import java.sql.*;
+import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -209,7 +208,7 @@ public class Shop {
             //sum all the rentalprice of curent rented cars
             int sum = 0;
             for (RentedCarHistory item : rentedCarHistories) {
-                sum = sum + item.getRentalPricel();
+                sum = sum + item.getRentalPrice();
             }
             System.out.println("The income from the rented cars is: " + sum);
         } else {

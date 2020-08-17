@@ -3,7 +3,6 @@ package ro.jademy;
 
 import ro.jademy.Users.Client;
 import ro.jademy.Users.Seller;
-import ro.jademy.Users.User;
 import ro.jademy.cars.Car;
 import ro.jademy.cars.RentedCarHistory;
 import ro.jademy.cars.audi.Audi;
@@ -14,7 +13,6 @@ import ro.jademy.information.Model;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,13 +48,13 @@ public class DataSource {
     }
 
 
-    public static List<User> createClients() throws SQLException {
+    public static List<Client> createClients() throws SQLException {
         List<RentedCarHistory> rentedCarHistories = new ArrayList<>();
         Statement statement = con.createStatement();
-        List<User> clients = new ArrayList<>();
+        List<Client> clients = new ArrayList<>();
         String sql = "select user.name,user.email,user.phone,rented_car.is_rented,rented_car.pickup_date,rented_car.rental_price,rented_car.return_date,car.make,car.model,car.color,car.base_price,make.location,make.make,make.telephone_number,model.model,model.production_year,car.is_amg,car.is_m,car.is_sport,user.id_user,car.id_car\n" +
                 "from user left  join\n" +
-                "rented_car on user.id_user=rented_car.id_user left join car on rented_car.id_car=car.id_car left join make on make.id_make=car.id_make left join model on model.id_model=make.id_model";
+                "rented_car on user.id_user=rented_car.id_user left join car on rented_car.id_car=car.id_car left join make on make.id_make=car.id_make left join model on model.id_model=make.id_model where user.user_type='client' ";
         ResultSet rs = statement.executeQuery(sql);
         while (rs.next()) {
             if (rs.getDate("pickup_date") != null) {
@@ -65,10 +63,10 @@ public class DataSource {
                 RentedCarHistory rentedCarHistory = new RentedCarHistory(getCar(rs), pickupDate, returnDate,
                         rs.getBoolean("is_rented"), rs.getInt("rental_price"));
                 rentedCarHistories.add(rentedCarHistory);
-                User user = new Client(rs.getString("name"), rs.getString("email"), rs.getString("phone"), rentedCarHistories, rs.getInt("id_user"));
+                Client user = new Client(rs.getString("name"), rs.getString("email"), rs.getString("phone"), rentedCarHistories, rs.getInt("id_user"));
                 clients.add(user);
             } else {
-                User user = new Client(rs.getString("name"), rs.getString("email"), rs.getString("phone"), rentedCarHistories, rs.getInt("id_user"));
+                Client user = new Client(rs.getString("name"), rs.getString("email"), rs.getString("phone"), rentedCarHistories, rs.getInt("id_user"));
                 clients.add(user);
             }
 
@@ -76,13 +74,13 @@ public class DataSource {
         return clients;
     }
 
-    public static List<User> createSeller() throws SQLException {
+    public static List<Seller> createSeller() throws SQLException {
         Statement statement = con.createStatement();
-        List<User> sellers = new ArrayList<>();
+        List<Seller> sellers = new ArrayList<>();
         String sql = "select * from user where user_type = 'seller' ";
         ResultSet rs = statement.executeQuery(sql);
         while (rs.next()) {
-            User user = new Seller(rs.getString("name"), rs.getString("email"), rs.getString("phone"), rs.getInt("id_user"));
+            Seller user = new Seller(rs.getString("name"), rs.getString("email"), rs.getString("phone"), rs.getInt("id_user"));
             sellers.add(user);
 
         }
@@ -121,12 +119,11 @@ public class DataSource {
         }
     }
 
-    //de completat
     public static void saveRentedCar(RentedCarHistory carHistory, Client loggedIn) throws SQLException {
         String sql = "insert into rented_car (is_rented,rental_price,pickup_date,return_date,id_car,id_user) values (?,?,?,?,?,?);";
         PreparedStatement statement = con.prepareStatement(sql);
         boolean isRented = carHistory.isCurentlyRented();
-        int rentalPrice = carHistory.getRentalPricel();
+        int rentalPrice = carHistory.getRentalPrice();
         LocalDate date = carHistory.getPickUp();
         Date pickUp = java.sql.Date.valueOf(date);
         LocalDate date1 = carHistory.getReturnDate();

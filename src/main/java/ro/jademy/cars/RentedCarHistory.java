@@ -8,17 +8,16 @@ public class RentedCarHistory {
     private LocalDate pickUp;
     private LocalDate returnDate;
     private boolean isCurentlyRented;
-    private int rentalPricel;
+    private int rentalPrice;
 
 
-    public RentedCarHistory(Car car, LocalDate pickUp, LocalDate returnDate, boolean isCurentlyRented, int rentalPricel) {
+    public RentedCarHistory(Car car, LocalDate pickUp, LocalDate returnDate, boolean isCurentlyRented, int rentalPrice) {
         this.car = car;
         this.pickUp = pickUp;
         this.returnDate = returnDate;
         this.isCurentlyRented = isCurentlyRented;
-        this.rentalPricel = rentalPricel;
+        this.rentalPrice = rentalPrice;
     }
-
 
 
     public Car getCar() {
@@ -53,20 +52,22 @@ public class RentedCarHistory {
         isCurentlyRented = curentlyRented;
     }
 
-    public int getRentalPricel() {
-        return rentalPricel;
+    public int getRentalPrice() {
+        return rentalPrice;
     }
 
-    public void setRentalPricel(int rentalPricel) {
-        this.rentalPricel = rentalPricel;
+    public void setRentalPrice(int rentalPrice) {
+        this.rentalPrice = rentalPrice;
     }
 
     @Override
     public String toString() {
-        return   "car=" + car +
+        return "car=" + car +
                 ", pickUp=" + pickUp +
                 ", returnDate=" + returnDate +
                 ", isCurentlyRented=" + isCurentlyRented +
-                ", rentalPricel=" + rentalPricel ;
+                ", rentalPrice=" + rentalPrice;
     }
+
+
 }

@@ -3,6 +3,8 @@ package ro.jademy.cars;
 import ro.jademy.information.Make;
 import ro.jademy.information.Model;
 
+import java.util.Objects;
+
 public abstract class Car {
     private Make make;
     private Model model;
@@ -11,13 +13,13 @@ public abstract class Car {
     private boolean isRented;
     private int id;
 
-    public Car(Make make, Model model, String color, int basePrice, boolean isRented,int id) {
+    public Car(Make make, Model model, String color, int basePrice, boolean isRented, int id) {
         this.make = make;
         this.model = model;
         this.color = color;
         this.basePrice = basePrice;
         this.isRented = isRented;
-        this.id=id;
+        this.id = id;
     }
 
     public void setMake(Make make) {
@@ -71,9 +73,27 @@ public abstract class Car {
     @Override
     public String toString() {
         return
-                 make +
-                ", model=" + model +
-                ", color='" + color + '\'' +
-                ", basePrice=" + basePrice;
+                make +
+                        ", model=" + model +
+                        ", color='" + color + '\'' +
+                        ", basePrice=" + basePrice;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Car car = (Car) o;
+        return basePrice == car.basePrice &&
+                isRented == car.isRented &&
+                id == car.id &&
+                Objects.equals(make, car.make) &&
+                Objects.equals(model, car.model) &&
+                Objects.equals(color, car.color);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(make, model, color, basePrice, isRented, id);
     }
 }

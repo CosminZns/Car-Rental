@@ -8,7 +8,7 @@ public class Audi extends Car {
     private boolean isSport;
 
     public Audi(Make make, Model model, String color, int price, boolean isSport, boolean isRented, int id) {
-        super(make, model, color, price, isRented,id);
+        super(make, model, color, price, isRented, id);
         this.isSport = isSport;
     }
 
