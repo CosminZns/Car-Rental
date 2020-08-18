@@ -18,14 +18,16 @@ public class Shop {
 
     private List<Car> cars;
     private List<User> users;
+    private Statistics statistics;
     private Scanner sc = new Scanner(System.in);
     private User loggedIn;
     private List<RentedCarHistory> rentedCarHistories = new ArrayList<>();
 
 
-    public Shop(List<Car> cars, List<User> users) {
+    public Shop(List<Car> cars, List<User> users, Statistics statistics) {
         this.cars = cars;
         this.users = users;
+        this.statistics = statistics;
     }
 
     public void displayCars(List<Car> cars) {
@@ -68,7 +70,13 @@ public class Shop {
                 start();
                 break;
             case 8:
-                System.exit(0);
+                showRentedCars();
+                start();
+            case 9:
+                showStatistics();
+                start();
+            case 10:
+                System.exit(10);
             default:
                 System.out.println("Invalid choice");
         }
@@ -83,7 +91,9 @@ public class Shop {
         System.out.println("5.Display Available Cars");
         System.out.println("6.Log out");
         System.out.println("7.Return car");
-        System.out.println("8.Exit");
+        System.out.println("8.Show Rented Cars");
+        System.out.println("9.Statistics");
+        System.out.println("10.Exit");
     }
 
     public void filterCars() {
@@ -108,6 +118,29 @@ public class Shop {
         }
     }
 
+    private void showStatistics() {
+        System.out.println("1.How many times was a car rented");
+        System.out.println("2.How many times each cars was rented");
+        System.out.println("3.The most rented Car");
+        System.out.println("4.Averege time a car is rented");
+        int decision = sc.nextInt();
+        switch (decision) {
+            case 1:
+                System.out.println(cars);
+                statistics.getRentedCarTimes();
+                break;
+            case 2:
+                statistics.numberOfRents();
+                break;
+            case 3:
+                statistics.bestRentedCar(statistics.numberOfRents());
+                break;
+            case 4:
+                statistics.displayAveregeRentedTime();
+                break;
+        }
+    }
+
     private void filterbyColor() {
         System.out.println("Type the color ");
         String inputColor = sc.next();
@@ -124,7 +157,7 @@ public class Shop {
         System.out.println("Type the model ");
         String model = sc.next();
         for (Car car : cars) {
-            if (car.getModel().getModel().equals(model)) {
+            if (car.getModel().getName().equals(model)) {
                 System.out.println(car);
             }
         }
@@ -134,7 +167,7 @@ public class Shop {
         System.out.println("Type the make ");
         String make = sc.next();
         for (Car car : cars) {
-            if (car.getMake().getMake().equals(make)) {
+            if (car.getMake().getName().equals(make)) {
                 System.out.println(car);
             }
         }
@@ -152,41 +185,14 @@ public class Shop {
                 if (decision <= availableCars.size()) {
                     boolean correctDates = false;
                     while (!correctDates) {
-                        System.out.println("Please enter the date u want to pick up the car");
-                        System.out.println("Year:");
-                        int year = sc.nextInt();
-                        System.out.println("Month:");
-                        int month = sc.nextInt();
-                        System.out.println("Day:");
-                        int day = sc.nextInt();
                         LocalDate localDate = LocalDate.now();
-                        LocalDate pickUp = LocalDate.of(Integer.parseInt(String.valueOf(year)),
-                                Integer.parseInt(String.valueOf(month)),
-                                Integer.parseInt(String.valueOf(day)));
+                        LocalDate pickUp = inputDates("pick up");
                         if (pickUp.isAfter(localDate)) {
-                            System.out.println("Please enter the date u want to return the car");
-                            System.out.println("Year:");
-                            year = sc.nextInt();
-                            System.out.println("Month:");
-                            month = sc.nextInt();
-                            System.out.println("Day:");
-                            day = sc.nextInt();
-                            LocalDate returnDate = LocalDate.of(Integer.parseInt(String.valueOf(year)),
-                                    Integer.parseInt(String.valueOf(month)),
-                                    Integer.parseInt(String.valueOf(day)));
+                            LocalDate returnDate = inputDates("return");
                             if (returnDate.isAfter(pickUp)) {
                                 correctDates = true;
-                                long days = pickUp.until(returnDate, ChronoUnit.DAYS);
-                                int rentalPrice = (int) (cars.get(decision).getBasePrice() * days);
-                                System.out.println("You will pay " + rentalPrice + "$");
-                                RentedCarHistory carHistory = new RentedCarHistory(cars.get(decision), pickUp, returnDate, true, rentalPrice);
-                                cars.get(decision).setRented(true);
-                                rentedCarHistories.add(carHistory);
-                                client.setRentedCarHistories(rentedCarHistories);
-                                DataSource.saveRentedCar(carHistory, client);
-                                System.out.println("You rented" + client.getCurrentRentedCar());
+                                finishRenting(pickUp, returnDate, decision, client);
                             }
-
                         } else {
                             System.out.println("Please enter a valid date");
                         }
@@ -200,12 +206,46 @@ public class Shop {
         } else {
             System.out.println("You are logged in as a seller");
         }
-
     }
 
-    public void displayIncome() {
+    private void finishRenting(LocalDate pickUp, LocalDate returnDate, int decision, Client client) throws SQLException {
+        long days = pickUp.until(returnDate, ChronoUnit.DAYS);
+        int rentalPrice = (int) (cars.get(decision).getBasePrice() * days);
+        System.out.println("You will pay " + rentalPrice + "$");
+        RentedCarHistory carHistory = new RentedCarHistory(cars.get(decision), pickUp, returnDate, true, rentalPrice);
+        cars.get(decision).setRented(true);
+        rentedCarHistories.add(carHistory);
+        client.setRentedCarHistories(rentedCarHistories);
+        DataSource.saveRentedCar(carHistory, client);
+        System.out.println("You rented" + client.getCurrentRentedCar());
+    }
+
+    private LocalDate inputDates(String when) {
+        System.out.println("Please enter the date u want to" + when + "the car");
+        System.out.println("Year:");
+        int year = sc.nextInt();
+        System.out.println("Month:");
+        int month = sc.nextInt();
+        System.out.println("Day:");
+        int day = sc.nextInt();
+        return LocalDate.of(Integer.parseInt(String.valueOf(year)),
+                Integer.parseInt(String.valueOf(month)),
+                Integer.parseInt(String.valueOf(day)));
+    }
+
+    private void showRentedCars() {
+        List<Car> rentedCars = new ArrayList<>();
+        for (Car car : cars) {
+            if (car.isRented()) {
+                rentedCars.add(car);
+            }
+        }
+        System.out.println(rentedCars);
+    }
+
+    private void displayIncome() {
         if (loggedIn instanceof Seller) {
-            //sum all the rentalprice of curent rented cars
+            //sum all the rentalprices of curent rented cars
             int sum = 0;
             for (RentedCarHistory item : rentedCarHistories) {
                 sum = sum + item.getRentalPrice();
@@ -267,8 +307,6 @@ public class Shop {
             } else {
                 count++;
                 System.out.println("Wrong username or password, please try again");
-
-
             }
         } while (loggedIn == null && count < 2);
     }
