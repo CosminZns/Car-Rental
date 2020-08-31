@@ -118,4 +118,6 @@ public class Statistics {
         int averegeTime = sum / times.size();
         System.out.println("Averege time a car is rented is : " + averegeTime + " days");
     }
+
+
 }

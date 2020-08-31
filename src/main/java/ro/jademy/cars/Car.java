@@ -5,7 +5,7 @@ import ro.jademy.information.Model;
 
 import java.util.Objects;
 
-public abstract class Car {
+public abstract class Car implements Comparable<Car> {
     private Make make;
     private Model model;
     private String color;
@@ -96,4 +96,18 @@ public abstract class Car {
     public int hashCode() {
         return Objects.hash(make, model, color, basePrice, isRented, id);
     }
+
+    @Override
+    public int compareTo(Car o) {
+        int comp = 0;
+        comp = o.getMake().getName().compareTo(this.getMake().getName());
+        if (comp == 0) {
+            comp = o.getModel().getName().compareTo(this.getModel().getName());
+//            if (comp == 0) {
+//                return (Integer) o.getBasePrice().compareTo((Integer)this.getBasePrice());
+//            }
+        }
+        return comp;
+    }
+
 }

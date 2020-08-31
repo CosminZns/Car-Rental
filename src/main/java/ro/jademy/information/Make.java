@@ -26,6 +26,7 @@ public class Make {
         return telephoneNr;
     }
 
+
     public void setTelephoneNr(String telephoneNr) {
         this.telephoneNr = telephoneNr;
     }
@@ -37,6 +38,7 @@ public class Make {
     public void setLocation(String location) {
         this.location = location;
     }
+
 
     @Override
     public String toString() {
@@ -61,4 +63,5 @@ public class Make {
     public int hashCode() {
         return Objects.hash(name, telephoneNr, location);
     }
+
 }

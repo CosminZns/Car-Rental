@@ -9,9 +9,7 @@ import ro.jademy.cars.RentedCarHistory;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Shop {
@@ -76,7 +74,10 @@ public class Shop {
                 showStatistics();
                 start();
             case 10:
-                System.exit(10);
+                searchCar();
+                start();
+            case 11:
+                System.exit(0);
             default:
                 System.out.println("Invalid choice");
         }
@@ -93,7 +94,8 @@ public class Shop {
         System.out.println("7.Return car");
         System.out.println("8.Show Rented Cars");
         System.out.println("9.Statistics");
-        System.out.println("10.Exit");
+        System.out.println("10.Search Car");
+        System.out.println("11.Exit");
     }
 
     public void filterCars() {
@@ -154,24 +156,27 @@ public class Shop {
     }
 
     private void filterbyModel() {
-        System.out.println("Type the model ");
-        String model = sc.next();
-        for (Car car : cars) {
-            if (car.getModel().getName().equals(model)) {
-                System.out.println(car);
+        List<Car> cars = new ArrayList<>(this.cars);
+        cars.sort(new Comparator<Car>() {
+            @Override
+            public int compare(Car o1, Car o2) {
+                return o1.getModel().getName().compareTo(o2.getModel().getName());
             }
-        }
+        });
+        System.out.println(cars);
     }
 
     private void filterbyMake() {
-        System.out.println("Type the make ");
-        String make = sc.next();
-        for (Car car : cars) {
-            if (car.getMake().getName().equals(make)) {
-                System.out.println(car);
+        List<Car> cars = new ArrayList<>(this.cars);
+        Collections.sort(cars, new Comparator<Car>() {
+            @Override
+            public int compare(Car o1, Car o2) {
+                return o1.getMake().getName().compareTo(o2.getMake().getName());
             }
-        }
+        });
+        System.out.println(cars);
     }
+
 
     public void rentCar() throws SQLException {
         if (loggedIn instanceof Client) {
@@ -284,18 +289,45 @@ public class Shop {
         }
     }
 
-    private User logIn() {
+    private void searchCar() throws SQLException {
+        System.out.println("Type the ID for the car you want to search");
+        System.out.println("ID:");
+        int id = sc.nextInt();
+        List<Car> carList = new ArrayList<>(this.cars);
+        Collections.sort(cars);
+        int carIndex = 0;
+        for (Car car : carList) {
+            if (car.getId() == id) {
+                carIndex = Collections.binarySearch(cars, car);
+                break;
+            }
+        }
+        if (carIndex == 0) {
+            System.out.println("Please enter a valid id, or type exit");
+            if (sc.next().equals("exit")) {
+                start();
+            } else {
+                searchCar();
+            }
+
+        }
+        System.out.println(carList.get(carIndex));
+
+    }
+
+    private void logIn() {
         System.out.println("Type username");
         String userName = sc.next();
         System.out.println("Type email");
         String email = sc.next();
         for (User user : users) {
             if (user.getName().equals(userName) && user.getEmail().equals(email)) {
-                return loggedIn = user;
+                loggedIn = user;
+                return;
             }
         }
 
-        return loggedIn = null;
+        loggedIn = null;
     }
 
     public void printLog() {
